@@ -2,13 +2,19 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from school.api import AdminClassViewSet, AdminParentStudentViewSet, AdminStudentViewSet
-from todos.api import ParentTodoViewSet
+from todos.api import ParentTodoCombined, ParentTodoViewSet
 from user.api import AdminUserViewSet
 
-from announcements.api import ParentAnnouncementList, TeacherClassAnnouncementListCreate
+from announcements.api import (
+    ParentAnnouncementList,
+    TeacherAnnouncementBroadcastCreate,
+    TeacherClassAnnouncementListCreate,
+)
 from homework.api import (
     ParentHomeworkStatusList,
     ParentHomeworkStatusSubmit,
+    ParentHomeworkTodoList,
+    ParentHomeworkTodoGroupedList,
     TeacherClassHomeworkListCreate,
     TeacherHomeworkStatusList,
     TeacherHomeworkStatusMarkChecked,
@@ -44,6 +50,11 @@ urlpatterns = [
         name="teacher-class-announcements",
     ),
     path(
+        "teacher/announcements/broadcast/",
+        TeacherAnnouncementBroadcastCreate.as_view(),
+        name="teacher-announcements-broadcast",
+    ),
+    path(
         "teacher/homework/<int:homework_id>/status/",
         TeacherHomeworkStatusList.as_view(),
         name="teacher-homework-status-list",
@@ -56,6 +67,13 @@ urlpatterns = [
 
     # Parent
     path("parent/homework/", ParentHomeworkStatusList.as_view(), name="parent-homework"),
+    path("parent/homework-todos/", ParentHomeworkTodoList.as_view(), name="parent-homework-todos"),
+    path(
+        "parent/homework-todos/grouped/",
+        ParentHomeworkTodoGroupedList.as_view(),
+        name="parent-homework-todos-grouped",
+    ),
+    path("parent/todos/combined/", ParentTodoCombined.as_view(), name="parent-todos-combined"),
     path(
         "parent/homework-status/<int:status_id>/submitted/",
         ParentHomeworkStatusSubmit.as_view(),

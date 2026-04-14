@@ -2,7 +2,7 @@
 
 Parenting Pal is a web app that helps teachers and parents track homework and school announcements in one place.
 
-This repository currently contains the **Django backend** (account/auth first). The homework, announcements, dashboards, and admin workflows will be added next.
+This repository currently contains the **Django backend** (auth + core APIs for classes/students, homework tracking, announcements, and parent todos).
 
 ## Goals (What this app must do)
 - Centralize homework assignments and announcements.
@@ -66,6 +66,10 @@ parentingpal/
 		manage.py
 		config/
 		user/
+		school/
+		homework/
+		announcements/
+		todos/
 		requirements.txt
 		.env.example
 ```
@@ -130,7 +134,7 @@ This is a minimal schema you can implement in any backend.
 	- Manage users
 	- Link parent to student
 
-## Implemented (account/auth)
+## Implemented
 
 ### Auth API
 - `POST /api/auth/token/` — get `{access, refresh}` using email/password
@@ -143,30 +147,33 @@ Users have a `role` field:
 - `teacher`
 - `parent`
 
-## Planned API (not implemented yet)
+## API (implemented)
 
 ### Admin
-- `POST /api/admin/users`
-- `GET /api/admin/users`
-- `PATCH /api/admin/users/:id`
-- `DELETE /api/admin/users/:id`
-- `POST /api/admin/parent-students` (link)
+- `GET/POST /api/admin/users/`
+- `PATCH/DELETE /api/admin/users/:id/`
+- `GET/POST /api/admin/classes/`
+- `PATCH/DELETE /api/admin/classes/:id/`
+- `GET/POST /api/admin/students/`
+- `PATCH/DELETE /api/admin/students/:id/`
+- `GET/POST /api/admin/parent-students/` (link)
+- `PATCH/DELETE /api/admin/parent-students/:id/`
 
 ### Teacher
-- `POST /api/teacher/classes/:classId/homework`
-- `GET /api/teacher/classes/:classId/homework`
-- `POST /api/teacher/classes/:classId/announcements`
-- `GET /api/teacher/homework/:homeworkId/status`
-- `PATCH /api/teacher/homework-status/:statusId` (set Checked)
+- `GET/POST /api/teacher/classes/:classId/homework/`
+- `GET/POST /api/teacher/classes/:classId/announcements/`
+- `POST /api/teacher/announcements/broadcast/` ("select all classes")
+- `GET /api/teacher/homework/:homeworkId/status/`
+- `PATCH /api/teacher/homework-status/:statusId/checked/` (set Checked)
 
 ### Parent
-- `GET /api/parent/homework`
-- `PATCH /api/parent/homework-status/:statusId` (set Submitted)
-- `GET /api/parent/announcements`
-- `GET /api/parent/todos`
-- `POST /api/parent/todos`
-- `PATCH /api/parent/todos/:id`
-- `DELETE /api/parent/todos/:id`
+- `GET /api/parent/homework/`
+- `GET /api/parent/homework-todos/` (computed "Homework To-Do" = assigned statuses)
+- `PATCH /api/parent/homework-status/:statusId/submitted/` (set Submitted)
+- `GET /api/parent/announcements/`
+- `GET/POST /api/parent/todos/`
+- `PATCH/DELETE /api/parent/todos/:id/`
+- `GET /api/parent/todos/combined/` (returns `{manual: [...], homework: [...]}`)
 
 ## Backend setup (local)
 
@@ -191,16 +198,35 @@ From the repo root:
 
 4. Migrate and create an admin user
 	```bash
-	python backend/manage.py migrate
-	python backend/manage.py createsuperuser
+	python3 backend/manage.py migrate
+	python3 backend/manage.py createsuperuser
 	```
 
-5. Run the server
+5. (Optional) Seed mock data
 	```bash
-	python backend/manage.py runserver
+	python3 backend/manage.py seed_mock_data
 	```
+	- This creates demo users/classes/students/homework/announcements/todos.
+	- Creates these users:
+		- `admin@parentingpal.local`
+		- `teacher1@parentingpal.local`, `teacher2@parentingpal.local`
+		- `parent1@parentingpal.local`, `parent2@parentingpal.local`
+	- Default password for all seeded users is `password123`.
+	- Override it: `python3 backend/manage.py seed_mock_data --password mypass123`
 
-## Planned next (not implemented yet)
-- Admin APIs to manage users and link parent↔child
-- Models + APIs for classes, students, homework, announcements, to-do list
-- Role-based permissions on feature endpoints (teacher/parent/admin)
+6. (Optional) Clear latest mock data
+	- Recommended (deletes only the records created by the seeder):
+		```bash
+		python3 backend/manage.py clear_mock_data
+		python3 backend/manage.py clear_mock_data --yes
+		```
+	- Nuclear option (wipes ALL tables):
+		```bash
+		python3 backend/manage.py flush
+		```
+
+
+7. Run the server
+	```bash
+	python3 backend/manage.py runserver
+	```

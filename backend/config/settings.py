@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'user',
     'school',
-    'homework',
+    'homework.apps.HomeworkConfig',
     'announcements',
     'todos',
 ]

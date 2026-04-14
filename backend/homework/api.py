@@ -11,6 +11,8 @@ from .models import Homework, HomeworkStatus
 from .serializers import (
     HomeworkSerializer,
     HomeworkStatusSerializer,
+    HomeworkTodoSerializer,
+    HomeworkTodoGroupedSerializer,
     ParentHomeworkStatusUpdateSerializer,
     TeacherHomeworkCreateSerializer,
     TeacherHomeworkStatusUpdateSerializer,
@@ -81,6 +83,66 @@ class ParentHomeworkStatusList(APIView):
             .order_by("homework__due_date")
         )
         return Response(HomeworkStatusSerializer(qs, many=True).data)
+
+
+class ParentHomeworkTodoList(APIView):
+    """Computed To-Do list derived from homework statuses.
+
+    Returns only assigned homework statuses for the parent's linked students.
+    """
+
+    permission_classes = [IsParentRole]
+
+    def get(self, request):
+        student_ids = ParentStudent.objects.filter(parent=request.user).values_list("student_id", flat=True)
+        qs = (
+            HomeworkStatus.objects.filter(student_id__in=student_ids, status=HomeworkStatus.Status.ASSIGNED)
+            .select_related("student", "homework", "homework__school_class")
+            .order_by("homework__due_date", "student__full_name")
+        )
+        return Response(HomeworkTodoSerializer(qs, many=True).data)
+
+
+class ParentHomeworkTodoGroupedList(APIView):
+    """Computed Homework To-Do grouped by homework.
+
+    Useful for UI that shows one homework row with per-child checkboxes.
+    """
+
+    permission_classes = [IsParentRole]
+
+    def get(self, request):
+        student_ids = ParentStudent.objects.filter(parent=request.user).values_list("student_id", flat=True)
+        qs = (
+            HomeworkStatus.objects.filter(student_id__in=student_ids, status=HomeworkStatus.Status.ASSIGNED)
+            .select_related("student", "homework", "homework__school_class")
+            .order_by("homework__due_date", "homework_id", "student__full_name")
+        )
+
+        grouped: dict[int, dict] = {}
+        for hw_status in qs:
+            hw = hw_status.homework
+            school_class = hw.school_class
+
+            entry = grouped.get(hw.id)
+            if entry is None:
+                entry = {
+                    "homework_id": hw.id,
+                    "homework_title": hw.title,
+                    "homework_due_date": hw.due_date,
+                    "class_id": school_class.id,
+                    "class_name": school_class.name,
+                    "items": [],
+                }
+                grouped[hw.id] = entry
+
+            entry["items"].append(hw_status)
+
+        payload = list(grouped.values())
+        # Keep deterministic ordering: due_date then homework_id
+        payload.sort(key=lambda x: (x["homework_due_date"], x["homework_id"]))
+
+        return Response(HomeworkTodoGroupedSerializer(payload, many=True).data)
 
 
 class ParentHomeworkStatusSubmit(APIView):
