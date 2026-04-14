@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parenting Pal — Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/frontend/app.js" defer></script>
+  </head>
+  <body data-page="login" class="min-h-screen bg-gradient-to-br from-pink-50 via-indigo-50 to-emerald-50 text-slate-900">
+    <div class="mx-auto max-w-xl px-6 py-10">
+      <div class="rounded-2xl bg-white/70 backdrop-blur border border-white shadow-sm p-6">
+        <div class="flex items-center justify-between gap-4">
+          <h1 class="text-2xl font-semibold tracking-tight">Parenting Pal</h1>
+          <div class="text-sm text-slate-600">Login</div>
+        </div>
+      </div>
+
+      <div id="msg" class="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-800" hidden></div>
+
+      <div class="mt-4 rounded-2xl bg-white/80 backdrop-blur border border-white shadow-sm p-6">
+        <h2 class="text-lg font-semibold">Sign in</h2>
+
+        <form id="loginForm" class="mt-4 space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+            <input id="email" type="email" placeholder="teacher1@parentingpal.local" required
+              class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+            <input id="password" type="password" placeholder="password123" required
+              class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+          </div>
+
+          <button type="submit"
+            class="w-full rounded-xl bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            Login
+          </button>
+
+          <div class="text-sm text-slate-600">
+            New here?
+            <a class="font-medium text-indigo-700 hover:underline" href="/app/register/">Create a parent account</a>
+          </div>
+
+          <div class="text-sm text-slate-600">
+            Tip: run <code class="rounded bg-slate-100 px-1.5 py-0.5">python3 backend/manage.py seed_mock_data</code> and use password <code class="rounded bg-slate-100 px-1.5 py-0.5">password123</code>.
+          </div>
+        </form>
+      </div>
+
+      <div class="mt-4 rounded-2xl bg-white/80 backdrop-blur border border-white shadow-sm p-6">
+        <h3 class="text-base font-semibold">Admin</h3>
+        <div class="mt-1 text-sm text-slate-600">You can also use Django admin at <a class="font-medium text-indigo-700 hover:underline" href="/admin/">/admin/</a>.</div>
+      </div>
+    </div>
+  </body>
+</html>

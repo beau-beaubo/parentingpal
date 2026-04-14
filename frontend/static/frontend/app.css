@@ -1,0 +1,310 @@
+/* Minimal, clean UI using system colors (no custom theme palette). */
+
+:root {
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --radius: 12px;
+  --border: 1px solid;
+  --focus: 2px solid currentColor;
+  --focus-offset: 2px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  padding: var(--space-5);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.45;
+  background: Canvas;
+  color: CanvasText;
+}
+
+@supports (background: color-mix(in srgb, Canvas 90%, Highlight 10%)) {
+  body {
+    background: color-mix(in srgb, Canvas 92%, Highlight 8%);
+  }
+}
+
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.header-card {
+  border: var(--border);
+  border-radius: calc(var(--radius) + 4px);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  background: Canvas;
+}
+
+@supports (background: color-mix(in srgb, Canvas 82%, Highlight 18%)) {
+  .header-card {
+    background: color-mix(in srgb, Canvas 84%, Highlight 16%);
+    border-color: color-mix(in srgb, CanvasText 16%, Canvas 84%);
+  }
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: 1.05rem;
+}
+
+a {
+  color: inherit;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.95em;
+}
+
+.card {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  background: Canvas;
+}
+
+@supports (background: color-mix(in srgb, Canvas 96%, CanvasText 4%)) {
+  .card {
+    background: color-mix(in srgb, Canvas 96%, CanvasText 4%);
+    border-color: color-mix(in srgb, CanvasText 18%, Canvas 82%);
+  }
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.divider {
+  height: 1px;
+  background: currentColor;
+  opacity: 0.12;
+  margin: var(--space-3) 0;
+}
+
+.row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.row > * { flex: 1; min-width: 280px; }
+
+label { display: block; margin-bottom: 6px; }
+
+.help {
+  margin-top: 6px;
+  opacity: 0.72;
+  font-size: 0.9rem;
+}
+
+input, select, textarea, button {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: var(--border);
+  font: inherit;
+}
+
+input, select, textarea {
+  background: Field;
+  color: FieldText;
+}
+
+button {
+  cursor: pointer;
+  background: ButtonFace;
+  color: ButtonText;
+}
+
+@supports (background: color-mix(in srgb, ButtonFace 86%, Highlight 14%)) {
+  button {
+    background: color-mix(in srgb, ButtonFace 86%, Highlight 14%);
+    border-color: color-mix(in srgb, CanvasText 18%, Canvas 82%);
+  }
+}
+
+.btn {
+  white-space: nowrap;
+}
+
+.btn-secondary {
+  background: ButtonFace;
+}
+
+@supports (background: color-mix(in srgb, ButtonFace 94%, CanvasText 6%)) {
+  .btn-secondary {
+    background: color-mix(in srgb, ButtonFace 94%, CanvasText 6%);
+  }
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(0.98);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+input:focus, select:focus, textarea:focus, button:focus {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+@supports (outline-color: Highlight) {
+  input:focus, select:focus, textarea:focus, button:focus {
+    outline-color: Highlight;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.actions button {
+  width: auto;
+}
+
+.small {
+  font-size: 0.9rem;
+}
+
+.list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.list-item {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  background: Canvas;
+}
+
+.list-item.tight {
+  padding: 10px;
+}
+
+@supports (background: color-mix(in srgb, Canvas 98%, CanvasText 2%)) {
+  .list-item {
+    background: color-mix(in srgb, Canvas 98%, CanvasText 2%);
+    border-color: color-mix(in srgb, CanvasText 18%, Canvas 82%);
+  }
+}
+
+.list-item .meta { flex: 1; }
+
+.muted { opacity: 0.75; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: var(--border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+@supports (background: color-mix(in srgb, Canvas 88%, Highlight 12%)) {
+  .pill {
+    background: color-mix(in srgb, Canvas 90%, Highlight 10%);
+    border-color: color-mix(in srgb, CanvasText 16%, Canvas 84%);
+  }
+}
+
+.pill--assigned {
+  border-style: dashed;
+}
+
+.pill--submitted {
+  border-style: solid;
+}
+
+.pill--checked {
+  border-style: solid;
+}
+
+@supports (background: color-mix(in srgb, Canvas 86%, LinkText 14%)) {
+  .pill--submitted {
+    background: color-mix(in srgb, Canvas 88%, LinkText 12%);
+  }
+}
+
+@supports (background: color-mix(in srgb, Canvas 86%, Highlight 14%)) {
+  .pill--checked {
+    background: color-mix(in srgb, Canvas 86%, Highlight 14%);
+  }
+}
+
+.error {
+  border: 2px solid;
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-2);
+}
+
+.success {
+  border: 2px solid;
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-2);
+}
+
+@supports (background: color-mix(in srgb, Canvas 86%, Highlight 14%)) {
+  .error, .success {
+    background: color-mix(in srgb, Canvas 90%, Highlight 10%);
+    border-color: color-mix(in srgb, CanvasText 26%, Canvas 74%);
+  }
+}

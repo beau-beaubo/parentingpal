@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parenting Pal — Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/frontend/app.js" defer></script>
+  </head>
+  <body data-page="admin" class="min-h-screen bg-gradient-to-br from-rose-50 via-indigo-50 to-sky-50 text-slate-900">
+    <div class="mx-auto max-w-3xl px-6 py-10">
+      <div class="rounded-2xl bg-white/70 backdrop-blur border border-white shadow-sm p-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 class="text-2xl font-semibold tracking-tight">Admin</h1>
+            <div id="me" class="mt-1 text-sm text-slate-600"></div>
+          </div>
+          <button id="logout" type="button"
+            class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-2 font-semibold text-slate-800 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <div id="msg" class="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-800" hidden></div>
+
+      <div class="mt-6 rounded-2xl bg-white/80 backdrop-blur border border-white shadow-sm p-6">
+        <h2 class="text-lg font-semibold">Django Admin</h2>
+        <div class="mt-1 text-sm text-slate-600">Use Django admin to manage users/classes/students:</div>
+        <div class="mt-4">
+          <a class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400" href="/admin/">Open /admin/</a>
+        </div>
+      </div>
+
+      <div class="mt-6 rounded-2xl bg-white/60 backdrop-blur border border-white shadow-sm p-5 text-sm text-slate-600">
+        Note: the REST Admin APIs are also available under <code class="rounded bg-slate-100 px-1.5 py-0.5">/api/admin/...</code>.
+      </div>
+    </div>
+  </body>
+</html>

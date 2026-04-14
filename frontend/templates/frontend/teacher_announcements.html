@@ -1,0 +1,65 @@
+{% extends "frontend/app_shell.html" %}
+
+{% block content %}
+  <div class="rounded-3xl bg-white/80 backdrop-blur border border-white shadow-sm p-6">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight">Announcements</h1>
+        <div class="mt-1 text-sm text-slate-600">Create and view announcements</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="broadcastToggle" type="button" class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+          Broadcast: Off
+        </button>
+        <button type="button" data-open-modal="teacherAnnouncementCreate" class="inline-flex items-center justify-center rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-300">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="mt-6 rounded-3xl bg-white/80 backdrop-blur border border-white shadow-sm p-6">
+    <div class="flex items-center justify-between gap-4">
+      <h2 class="text-lg font-semibold">Class</h2>
+      <div class="text-sm text-slate-600">Choose class for announcements</div>
+    </div>
+    <label for="classSelect" class="mt-4 block text-sm font-medium text-slate-700">Select class</label>
+    <select id="classSelect" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"></select>
+  </section>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-2">
+    <section class="rounded-3xl bg-white/80 backdrop-blur border border-white shadow-sm p-6 lg:col-span-2">
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="text-lg font-semibold">List</h2>
+        <button type="button" data-open-modal="teacherAnnouncementCreate" class="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-300">Create</button>
+      </div>
+      <div class="mt-4 space-y-3" id="teacherAnnouncements"></div>
+    </section>
+  </div>
+
+  <!-- Announcement create modal -->
+  <div class="fixed inset-0 z-50 hidden" data-modal="teacherAnnouncementCreate">
+    <div class="absolute inset-0 bg-black/30" data-close-modal="teacherAnnouncementCreate"></div>
+    <div class="relative mx-auto mt-10 w-[92%] max-w-xl rounded-3xl bg-white shadow-xl ring-1 ring-slate-200">
+      <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-6 py-4">
+        <div class="text-base font-semibold">Create Announcement</div>
+        <button type="button" class="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-300" data-close-modal="teacherAnnouncementCreate">Close</button>
+      </div>
+      <div class="px-6 py-5">
+        <form id="announcementCreateForm" class="space-y-4">
+          <div>
+            <label for="anTitle" class="block text-sm font-medium text-slate-700">Title</label>
+            <input id="anTitle" type="text" required class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+          </div>
+          <div>
+            <label for="anMsg" class="block text-sm font-medium text-slate-700">Message</label>
+            <textarea id="anMsg" rows="3" required class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"></textarea>
+          </div>
+          <div>
+            <label for="anDate" class="block text-sm font-medium text-slate-700">Event date (optional)</label>
+            <input id="anDate" type="date" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+          </div>
+          <button type="submit" class="w-full rounded-xl bg-violet-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-300">Create</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

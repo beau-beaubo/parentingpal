@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from school.api import AdminClassViewSet, AdminParentStudentViewSet, AdminStudentViewSet
+from school.api import AdminClassViewSet, AdminParentStudentViewSet, AdminStudentViewSet, TeacherClassList
 from todos.api import ParentTodoCombined, ParentTodoViewSet
 from user.api import AdminUserViewSet
 
@@ -39,6 +39,7 @@ urlpatterns = [
     path("", include(router.urls)),
 
     # Teacher
+    path("teacher/classes/", TeacherClassList.as_view(), name="teacher-classes"),
     path(
         "teacher/classes/<int:class_id>/homework/",
         TeacherClassHomeworkListCreate.as_view(),

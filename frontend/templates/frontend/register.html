@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parenting Pal — Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/frontend/app.js" defer></script>
+  </head>
+  <body data-page="register" class="min-h-screen bg-gradient-to-br from-pink-50 via-indigo-50 to-emerald-50 text-slate-900">
+    <div class="mx-auto max-w-xl px-6 py-10">
+      <div class="rounded-2xl bg-white/70 backdrop-blur border border-white shadow-sm p-6">
+        <div class="flex items-center justify-between gap-4">
+          <h1 class="text-2xl font-semibold tracking-tight">Parenting Pal</h1>
+          <div class="text-sm text-slate-600">Register</div>
+        </div>
+      </div>
+
+      <div id="msg" class="mt-4" hidden></div>
+
+      <div class="mt-4 rounded-2xl bg-white/80 backdrop-blur border border-white shadow-sm p-6">
+        <h2 class="text-lg font-semibold">Create a parent account</h2>
+
+        <form id="registerForm" class="mt-4 space-y-4">
+          <div>
+            <label for="fullName" class="block text-sm font-medium text-slate-700">Full name (optional)</label>
+            <input id="fullName" type="text" placeholder="Jane Doe"
+              class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+            <input id="email" type="email" placeholder="parent@example.com" required
+              class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+            <input id="password" type="password" placeholder="min 8 characters" required
+              class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+          </div>
+
+          <button type="submit"
+            class="w-full rounded-xl bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+            Create account
+          </button>
+
+          <div class="text-sm text-slate-600">
+            Already have an account?
+            <a class="font-medium text-indigo-700 hover:underline" href="/app/login/">Login</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
