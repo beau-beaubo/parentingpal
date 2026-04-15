@@ -11,16 +11,20 @@ class AdminTeacherRefSerializer(serializers.PrimaryKeyRelatedField):
 
 class SchoolClassSerializer(serializers.ModelSerializer):
     teacher = AdminTeacherRefSerializer()
+    teacher_name = serializers.CharField(source="teacher.full_name", read_only=True)
+    teacher_email = serializers.EmailField(source="teacher.email", read_only=True)
 
     class Meta:
         model = SchoolClass
-        fields = ("id", "name", "teacher")
+        fields = ("id", "name", "teacher", "teacher_name", "teacher_email")
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    school_class_name = serializers.CharField(source="school_class.name", read_only=True)
+
     class Meta:
         model = Student
-        fields = ("id", "full_name", "school_class")
+        fields = ("id", "full_name", "school_class", "school_class_name")
 
     def create(self, validated_data):
         student = super().create(validated_data)
@@ -57,9 +61,22 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
 class ParentStudentSerializer(serializers.ModelSerializer):
+    parent_name = serializers.CharField(source="parent.full_name", read_only=True)
+    parent_email = serializers.EmailField(source="parent.email", read_only=True)
+    student_name = serializers.CharField(source="student.full_name", read_only=True)
+    student_class_name = serializers.CharField(source="student.school_class.name", read_only=True)
+
     class Meta:
         model = ParentStudent
-        fields = ("id", "parent", "student")
+        fields = (
+            "id",
+            "parent",
+            "student",
+            "parent_name",
+            "parent_email",
+            "student_name",
+            "student_class_name",
+        )
 
     def validate_parent(self, value: User):
         if value.role != UserRole.PARENT:

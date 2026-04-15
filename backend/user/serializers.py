@@ -7,6 +7,11 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     full_name = serializers.CharField(required=False, allow_blank=True, max_length=255)
     password = serializers.CharField(min_length=8, write_only=True)
+    student_ids = serializers.ListField(
+        child=serializers.IntegerField(min_value=1),
+        required=False,
+        allow_empty=True,
+    )
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -1,0 +1,36 @@
+{% extends "frontend/app_shell.html" %}
+
+{% block content %}
+  <div class="rounded-3xl bg-white/70 backdrop-blur border border-white shadow-sm p-6">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight">Parent Profile</h1>
+      <div class="mt-1 text-sm text-slate-600">Your account details and linked children</div>
+    </div>
+  </div>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-2">
+    <section class="rounded-3xl bg-white/80 backdrop-blur border border-white shadow-sm p-6">
+      <h2 class="text-lg font-semibold">Account</h2>
+      <div class="mt-4 space-y-2 text-sm">
+        <div class="flex items-center justify-between gap-4">
+          <div class="text-slate-600">Name</div>
+          <div id="profileName" class="font-semibold text-slate-900">—</div>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <div class="text-slate-600">Email</div>
+          <div id="profileEmail" class="font-semibold text-slate-900">—</div>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <div class="text-slate-600">Role</div>
+          <div id="profileRole" class="font-semibold text-slate-900">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-3xl bg-white/80 backdrop-blur border border-white shadow-sm p-6">
+      <h2 class="text-lg font-semibold">Linked children</h2>
+      <div class="mt-1 text-sm text-slate-600">Students linked to this parent account</div>
+      <div id="linkedStudents" class="mt-4 space-y-2"></div>
+    </section>
+  </div>
+{% endblock %}

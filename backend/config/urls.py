@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 
 
@@ -24,6 +25,7 @@ PARENT_NAV_ITEMS = [
     {"key": "homework", "label": "Homework", "href": "/app/parent/homework/"},
     {"key": "announcements", "label": "Announcements", "href": "/app/parent/announcements/"},
     {"key": "todos", "label": "To‑Dos", "href": "/app/parent/todos/"},
+    {"key": "profile", "label": "Profile", "href": "/app/parent/profile/"},
 ]
 
 TEACHER_NAV_ITEMS = [
@@ -31,6 +33,15 @@ TEACHER_NAV_ITEMS = [
     {"key": "homework", "label": "Homework", "href": "/app/teacher/homework/"},
     {"key": "announcements", "label": "Announcements", "href": "/app/teacher/announcements/"},
     {"key": "statuses", "label": "Homework Statuses", "href": "/app/teacher/statuses/"},
+    {"key": "profile", "label": "Profile", "href": "/app/teacher/profile/"},
+]
+
+ADMIN_NAV_ITEMS = [
+    {"key": "overview", "label": "Overview", "href": "/app/admin/"},
+    {"key": "users", "label": "Users", "href": "/app/admin/users/"},
+    {"key": "classes", "label": "Classes", "href": "/app/admin/classes/"},
+    {"key": "students", "label": "Students", "href": "/app/admin/students/"},
+    {"key": "links", "label": "Links", "href": "/app/admin/links/"},
 ]
 
 urlpatterns = [
@@ -38,6 +49,7 @@ urlpatterns = [
     path('api/', include('config.api_urls')),
 
     # Frontend
+    path('app/', RedirectView.as_view(url='/app/login/', permanent=False), name='app-root'),
     path('app/login/', TemplateView.as_view(template_name='frontend/login.html'), name='app-login'),
     path('app/register/', TemplateView.as_view(template_name='frontend/register.html'), name='app-register'),
 
@@ -74,6 +86,14 @@ urlpatterns = [
         ),
         name='app-parent-todos',
     ),
+    path(
+        'app/parent/profile/',
+        TemplateView.as_view(
+            template_name='frontend/parent_profile.html',
+            extra_context={"nav_active": "profile", "page_title": "Parent • Profile", "data_page": "parent-profile", "nav_items": PARENT_NAV_ITEMS},
+        ),
+        name='app-parent-profile',
+    ),
 
     # Teacher tabs
     path(
@@ -108,7 +128,54 @@ urlpatterns = [
         ),
         name='app-teacher-statuses',
     ),
+    path(
+        'app/teacher/profile/',
+        TemplateView.as_view(
+            template_name='frontend/teacher_profile.html',
+            extra_context={"nav_active": "profile", "page_title": "Teacher • Profile", "data_page": "teacher-profile", "nav_items": TEACHER_NAV_ITEMS},
+        ),
+        name='app-teacher-profile',
+    ),
 
     # Admin helper
-    path('app/admin/', TemplateView.as_view(template_name='frontend/admin.html'), name='app-admin'),
+    path(
+        'app/admin/',
+        TemplateView.as_view(
+            template_name='frontend/admin_dashboard.html',
+            extra_context={"nav_active": "overview", "page_title": "Admin", "data_page": "admin", "nav_items": ADMIN_NAV_ITEMS},
+        ),
+        name='app-admin',
+    ),
+    path(
+        'app/admin/users/',
+        TemplateView.as_view(
+            template_name='frontend/admin_users.html',
+            extra_context={"nav_active": "users", "page_title": "Admin • Users", "data_page": "admin-users", "nav_items": ADMIN_NAV_ITEMS},
+        ),
+        name='app-admin-users',
+    ),
+    path(
+        'app/admin/classes/',
+        TemplateView.as_view(
+            template_name='frontend/admin_classes.html',
+            extra_context={"nav_active": "classes", "page_title": "Admin • Classes", "data_page": "admin-classes", "nav_items": ADMIN_NAV_ITEMS},
+        ),
+        name='app-admin-classes',
+    ),
+    path(
+        'app/admin/students/',
+        TemplateView.as_view(
+            template_name='frontend/admin_students.html',
+            extra_context={"nav_active": "students", "page_title": "Admin • Students", "data_page": "admin-students", "nav_items": ADMIN_NAV_ITEMS},
+        ),
+        name='app-admin-students',
+    ),
+    path(
+        'app/admin/links/',
+        TemplateView.as_view(
+            template_name='frontend/admin_links.html',
+            extra_context={"nav_active": "links", "page_title": "Admin • Links", "data_page": "admin-links", "nav_items": ADMIN_NAV_ITEMS},
+        ),
+        name='app-admin-links',
+    ),
 ]

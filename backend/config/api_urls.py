@@ -1,7 +1,15 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from school.api import AdminClassViewSet, AdminParentStudentViewSet, AdminStudentViewSet, TeacherClassList
+from school.api import (
+    AdminClassViewSet,
+    AdminParentStudentViewSet,
+    AdminStudentViewSet,
+    ParentLinkedStudentList,
+    PublicClassList,
+    PublicStudentList,
+    TeacherClassList,
+)
 from todos.api import ParentTodoCombined, ParentTodoViewSet
 from user.api import AdminUserViewSet
 
@@ -34,6 +42,10 @@ router.register(r"parent/todos", ParentTodoViewSet, basename="parent-todos")
 urlpatterns = [
     # Auth
     path("", include("user.urls")),
+
+    # Public (registration helpers)
+    path("public/classes/", PublicClassList.as_view(), name="public-classes"),
+    path("public/students/", PublicStudentList.as_view(), name="public-students"),
 
     # Router endpoints
     path("", include(router.urls)),
@@ -75,6 +87,7 @@ urlpatterns = [
         name="parent-homework-todos-grouped",
     ),
     path("parent/todos/combined/", ParentTodoCombined.as_view(), name="parent-todos-combined"),
+    path("parent/students/", ParentLinkedStudentList.as_view(), name="parent-linked-students"),
     path(
         "parent/homework-status/<int:status_id>/submitted/",
         ParentHomeworkStatusSubmit.as_view(),
