@@ -34,3 +34,30 @@ class HomeworkStatus(models.Model):
 
 	def __str__(self) -> str:
 		return f"{self.homework_id}:{self.student_id}:{self.status}"
+
+
+class HomeworkSubmissionEvent(models.Model):
+	"""Immutable event log for parent submission actions."""
+
+	parent_user = models.ForeignKey(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.CASCADE,
+		related_name="homework_submission_events",
+	)
+	homework_status = models.ForeignKey(
+		HomeworkStatus,
+		on_delete=models.CASCADE,
+		related_name="submission_events",
+	)
+	homework = models.ForeignKey(Homework, on_delete=models.CASCADE, related_name="submission_events")
+	student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="submission_events")
+
+	from_status = models.CharField(max_length=20)
+	to_status = models.CharField(max_length=20)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ["-created_at"]
+
+	def __str__(self) -> str:
+		return f"{self.parent_user_id}:{self.homework_id}:{self.student_id}:{self.from_status}->{self.to_status}"

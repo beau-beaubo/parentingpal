@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from school.models import SchoolClass
 
-from .models import Homework, HomeworkStatus
+from .models import Homework, HomeworkStatus, HomeworkSubmissionEvent
 from .services import ensure_homework_statuses
 
 
@@ -97,3 +97,28 @@ class HomeworkTodoGroupedSerializer(serializers.Serializer):
     class_name = serializers.CharField()
 
     items = HomeworkTodoSerializer(many=True)
+
+
+class HomeworkSubmissionEventSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source="student.full_name", read_only=True)
+    class_name = serializers.CharField(source="student.school_class.name", read_only=True)
+    homework_title = serializers.CharField(source="homework.title", read_only=True)
+    homework_due_date = serializers.DateField(source="homework.due_date", read_only=True)
+
+    class Meta:
+        model = HomeworkSubmissionEvent
+        fields = (
+            "id",
+            "created_at",
+            "from_status",
+            "to_status",
+            "parent_user",
+            "student",
+            "student_name",
+            "class_name",
+            "homework",
+            "homework_title",
+            "homework_due_date",
+            "homework_status",
+        )
+        read_only_fields = fields

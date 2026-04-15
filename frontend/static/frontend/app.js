@@ -1136,12 +1136,49 @@ async function loadParentHomeworkTodos(msg) {
       const statusId = btn.getAttribute("data-submit-status");
       try {
         await apiFetch(`/parent/homework-status/${statusId}/submitted/`, { method: "PATCH" });
-        await loadParentHomeworkTodos(msg);
+        await Promise.all([loadParentHomeworkTodos(msg), loadParentSubmissionHistory(msg)]);
       } catch (err) {
         renderMessage(msg, "error", err.message || String(err));
       }
     });
   });
+}
+
+async function loadParentSubmissionHistory(msg) {
+  const root = $("#submissionHistory");
+  if (!root) return;
+  root.innerHTML = "<div class='text-sm text-slate-600'>Loading…</div>";
+
+  try {
+    const events = await apiFetch("/parent/homework-submissions/history/");
+    if (!events.length) {
+      root.innerHTML = "<div class='text-sm text-slate-600'>No submission history yet.</div>";
+      return;
+    }
+
+    root.innerHTML = events
+      .map((e) => {
+        const when = e.created_at ? new Date(e.created_at).toLocaleString() : "";
+        const title = e.homework_title || `Homework #${e.homework}`;
+        const student = e.student_name || `Student #${e.student}`;
+        const className = e.class_name ? ` • Class: ${escapeHtml(e.class_name)}` : "";
+        const due = e.homework_due_date ? ` • Due: ${escapeHtml(e.homework_due_date)}` : "";
+
+        return `
+          <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <div class="text-sm font-semibold text-slate-900">${escapeHtml(title)}</div>
+            <div class="mt-1 text-sm text-slate-700">${escapeHtml(student)}${className}${due}</div>
+            <div class="mt-1 text-xs text-slate-500">${escapeHtml(when)} • ${escapeHtml(e.from_status)} → ${escapeHtml(
+          e.to_status
+        )}</div>
+          </div>
+        `;
+      })
+      .join("");
+  } catch (err) {
+    root.innerHTML = "<div class='text-sm text-rose-700'>Failed to load submission history.</div>";
+    renderMessage(msg, "error", err.message || String(err));
+  }
 }
 
 async function loadParentManualTodos(msg) {
@@ -1588,7 +1625,7 @@ async function pageParentTab(pageKey) {
       return;
     }
     if (pageKey === "parent-homework") {
-      await loadParentHomeworkTodos(msg);
+      await Promise.all([loadParentHomeworkTodos(msg), loadParentSubmissionHistory(msg)]);
       return;
     }
     if (pageKey === "parent-announcements") {

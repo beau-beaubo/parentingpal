@@ -1,138 +1,212 @@
 # Parenting Pal
 
-Parenting Pal is a web app that helps teachers and parents track homework and school announcements in one place.
+## Project Description
 
-This repository currently contains the **Django backend** (auth + core APIs for classes/students, homework tracking, announcements, and parent todos) and a minimal **HTML/CSS/JS frontend** served by Django.
+Parenting Pal is a web-based application designed to support communication between teachers and parents by providing a structured way to manage homework and school announcements.
 
-## Tech stack
+Teachers can assign homework and announcements, while parents can monitor their child's homework progress, identify missing assignments, and use a To-Do List as a reminder tool to support learning at home.
 
-- Backend: Django, Django REST Framework (DRF)
-- Auth: JSON Web Tokens (JWT) via `djangorestframework-simplejwt`
-- Database: SQLite by default (local), optional PostgreSQL via `DATABASE_URL`
-- Frontend: Django Templates + vanilla JavaScript + TailwindCSS (CDN)
+---
 
-## Roles & permissions
+## System Architecture Overview
 
-- **Admin**
-	- Creates teacher/admin accounts via Django admin.
-	- Manages classes, students, and parent↔student links.
-- **Teacher**
-	- Sees only their classes.
-	- Creates homework and announcements for their class.
-	- Marks homework statuses as checked after parents submit.
-- **Parent**
-	- Self-registers (public registration).
-	- Links to one or more children during registration.
-	- Marks homework as submitted for each child and manages personal to-dos.
+![System architecture overview](docs/screenshots/sys_arch.svg)
 
-## Architecture (high level)
+**High-level flow:**
 
-- Django apps:
-	- `user`: custom email-based user model, JWT auth endpoints, registration
-	- `school`: classes, students, parent↔student links
-	- `homework`: homework + per-student `HomeworkStatus` lifecycle
-	- `announcements`: class announcements + broadcast announcements
-	- `todos`: parent manual to-dos
-- Frontend pages are served under `/app/...` and call the JSON API under `/api/...` using JWT stored in `localStorage`.
+1. Browser loads pages from Django under `/app/...`
+2. Frontend JavaScript calls JSON APIs under `/api/...`
+3. Authentication uses JWT (SimpleJWT). The frontend stores the access token in `localStorage` and sends `Authorization: Bearer <token>`.
 
-## Key URLs
+**Core Django apps:**
 
-Frontend pages (served by Django):
+| App | Responsibility |
+|-----|----------------|
+| `user` | Custom email-based User model, JWT auth, registration, role permissions |
+| `school` | Classes, students, parent↔student links |
+| `homework` | Homework assignments + per-student `HomeworkStatus` |
+| `announcements` | Class announcements with broadcast support |
+| `todos` | Parent manual to-dos |
 
-- Login: `GET /app/login/`
-- Register (Parent): `GET /app/register/`
-- Parent dashboard: `GET /app/parent/`
-- Teacher dashboard: `GET /app/teacher/`
-- Admin dashboard: `GET /app/admin/`
+**Data model overview:**
 
-API (selected endpoints):
+- `SchoolClass` → has one `teacher` (User with role `teacher`)
+- `Student` → belongs to one `SchoolClass`
+- `ParentStudent` → links parent users to student records (many-to-many)
+- `Homework` → belongs to one class; each student has one `HomeworkStatus` per homework
 
-- Auth
-	- `POST /api/auth/token/` (login → JWT)
-	- `POST /api/auth/register/` (public parent registration → JWT)
-	- `GET /api/auth/me/` (current user)
-- Public registration helpers
-	- `GET /api/public/classes/`
-	- `GET /api/public/students/?class_id=...`
-- Teacher
-	- `GET /api/teacher/classes/`
-	- `POST /api/teacher/classes/<class_id>/homework/`
-	- `POST /api/teacher/classes/<class_id>/announcements/`
-	- `POST /api/teacher/announcements/broadcast/`
-	- `PATCH /api/teacher/homework-status/<status_id>/checked/`
-- Parent
-	- `GET /api/parent/homework-todos/grouped/`
-	- `PATCH /api/parent/homework-status/<status_id>/submitted/`
-	- `GET/POST/PATCH/DELETE /api/parent/todos/...`
-	- `GET /api/parent/announcements/`
+**Class diagram:** [View on dbdiagram.io](https://dbdiagram.io/e/69df70578089629684a21209/69df70940f7c9ef2c0021652)
 
-## Screenshots (add your own)
+---
 
-Add screenshots here for your submission rubric:
+## User Roles & Permissions
 
-- Login page (`/app/login/`)
-- Register page with class filter + student selection (`/app/register/`)
-- Parent dashboard (`/app/parent/`)
-- Teacher dashboard (`/app/teacher/`)
-- Admin dashboard (`/app/admin/`)
+### Admin
+- Full CRUD access to users, classes, students, and parent↔student links
+- Uses custom admin pages under `/app/admin/...` (not Django admin)
 
-## Backend setup (local)
+### Teacher
+- Can only access their own classes
+- Can create homework and announcements for their classes
+- Can mark student homework statuses as checked
+
+### Parent
+- Can self-register
+- Can be linked to one or more students
+- Can view homework and announcements for linked students/classes
+- Can manage personal to-dos
+
+---
+
+## Technology Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Django, Django REST Framework (DRF) |
+| Authentication | JWT via `djangorestframework-simplejwt` |
+| Database | SQLite (local dev) |
+| Frontend | Django Templates + Vanilla JavaScript + TailwindCSS (CDN) |
+
+---
+
+## Installation & Setup Instructions
+
+> **Prerequisites:** Python 3.x, pip
 
 From the repo root:
 
-1. Create a virtual environment
-	```bash
-	python3 -m venv .venv
-	source .venv/bin/activate
-	```
+**1. Create and activate a virtual environment**
 
-2. Install dependencies
-	```bash
-	pip install -r backend/requirements.txt
-	```
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-3. Create environment file
-	```bash
-	cp backend/.env.example backend/.env
-	```
-	- For PostgreSQL, set `DATABASE_URL` in `backend/.env`.
+**2. Install dependencies**
 
-4. Migrate and create an admin user
-	```bash
-	python3 backend/manage.py migrate
-	python3 backend/manage.py createsuperuser
-	```
+```bash
+pip install -r backend/requirements.txt
+```
 
-5. (Optional) Seed mock data
-	```bash
-	python3 backend/manage.py seed_mock_data
-	```
-	- This creates demo users/classes/students/homework/announcements/todos.
-	- Creates these users:
-		- `admin@parentingpal.local`
-		- `teacher1@parentingpal.local`, `teacher2@parentingpal.local`
-		- `parent1@parentingpal.local`, `parent2@parentingpal.local`
-	- Default password for all seeded users is `password123`.
-	- Override it: `python3 backend/manage.py seed_mock_data --password mypass123`
+**3. Create your env file** *(optional)*
 
+```bash
+cp backend/.env.example backend/.env
+```
 
-6. Run the server
-	```bash
-	python3 backend/manage.py runserver
-	```
+**4. Apply migrations**
 
-## Frontend pages (served by Django)
+```bash
+python3 backend/manage.py migrate
+```
 
-After starting the server:
-- Login: `GET /app/login/`
-- Register (Parent): `GET /app/register/`
-- Parent dashboard: `GET /app/parent/`
-- Teacher dashboard: `GET /app/teacher/`
-- Admin dashboard: `GET /app/admin/`
+**5. Seed realistic mock data** *(recommended)*
 
-Static assets are served from `GET /static/frontend/...`.
+```bash
+python3 backend/manage.py seed_mock_data
+```
 
-## Notes
+> Default password for all seeded users is `password123`.
 
-- Teacher self-registration is intentionally not available in this MVP; teachers are created by an admin.
-- For registration simplicity, the “select child(ren)” step uses public read-only endpoints for classes/students.
+---
+
+## How to Run the System
+
+Start the Django development server:
+
+```bash
+python3 backend/manage.py runserver
+```
+
+Then open the app in your browser:
+
+| Role | URL |
+|------|-----|
+| Login | `GET /app/login/` |
+| Register (Parent) | `GET /app/register/` |
+| Parent dashboard | `GET /app/parent/` |
+| Teacher dashboard | `GET /app/teacher/` |
+| Admin dashboard | `GET /app/admin/` |
+
+**Selected API endpoints:**
+
+<details>
+<summary>Auth</summary>
+
+```
+POST   /api/auth/token/
+POST   /api/auth/register/
+GET    /api/auth/me/
+```
+</details>
+
+<details>
+<summary>Admin</summary>
+
+```
+GET/POST/PATCH/DELETE  /api/admin/users/...
+GET/POST/PATCH/DELETE  /api/admin/classes/...
+GET/POST/PATCH/DELETE  /api/admin/students/...
+GET/POST/PATCH/DELETE  /api/admin/parent-students/...
+```
+</details>
+
+<details>
+<summary>Teacher</summary>
+
+```
+GET    /api/teacher/classes/
+POST   /api/teacher/classes/<class_id>/homework/
+POST   /api/teacher/classes/<class_id>/announcements/
+```
+</details>
+
+<details>
+<summary>Parent</summary>
+
+```
+GET    /api/parent/homework-todos/grouped/
+PATCH  /api/parent/homework-status/<status_id>/submitted/
+GET/POST/PATCH/DELETE  /api/parent/todos/...
+```
+</details>
+
+---
+
+## Screenshots
+
+### Authentication
+
+| Login | Register |
+|-------|----------|
+| ![Login screen](docs/screenshots/login.png) | ![Registration screen](docs/screenshots/register.png) |
+
+### Parent Views
+
+| Dashboard | Homework | Announcements |
+|-----------|----------|---------------|
+| ![Parent dashboard](docs/screenshots/parent-dashbaord.png) | ![Parent homework tab](docs/screenshots/parent-homework.png) | ![Parent announcements tab](docs/screenshots/parent-announ.png) |
+
+| To-Do List | Profile |
+|------------|---------|
+| ![Parent todo tab](docs/screenshots/parent-todo.png) | ![Parent profile](docs/screenshots/parent-profile.png) |
+
+### Teacher Views
+
+| Dashboard | Homework | Status |
+|-----------|----------|--------|
+| ![Teacher dashboard](docs/screenshots/t-dash.png) | ![Teacher homework tab](docs/screenshots/t-home.png) | ![Teacher homework status tab](docs/screenshots/t-status.png) |
+
+| Announcements | Profile |
+|---------------|---------|
+| ![Teacher announcement tab](docs/screenshots/t-announce.png) | ![Teacher profile](docs/screenshots/t-profile.png) |
+
+### Admin Views
+
+| Dashboard | Users | Students |
+|-----------|-------|----------|
+| ![Admin dashboard](docs/screenshots/admin-dashboard.png) | ![Admin users list](docs/screenshots/admin-userlist.png) | ![Admin student list](docs/screenshots/admin-stu-list.png) |
+
+| Classes | Parent Links |
+|---------|-------------|
+| ![Admin class list](docs/screenshots/admin-classlist.png) | ![Admin parent link](docs/screenshots/admin-link.png) |

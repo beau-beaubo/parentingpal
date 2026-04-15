@@ -21,6 +21,7 @@ from announcements.api import (
 from homework.api import (
     ParentHomeworkStatusList,
     ParentHomeworkStatusSubmit,
+    ParentHomeworkSubmissionHistoryList,
     ParentHomeworkTodoList,
     ParentHomeworkTodoGroupedList,
     TeacherClassHomeworkListCreate,
@@ -92,6 +93,11 @@ urlpatterns = [
         "parent/homework-status/<int:status_id>/submitted/",
         ParentHomeworkStatusSubmit.as_view(),
         name="parent-homework-status-submitted",
+    ),
+    path(
+        "parent/homework-submissions/history/",
+        ParentHomeworkSubmissionHistoryList.as_view(),
+        name="parent-homework-submission-history",
     ),
     path(
         "parent/announcements/",

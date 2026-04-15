@@ -7,10 +7,11 @@ from rest_framework.views import APIView
 from school.models import ParentStudent, SchoolClass
 from user.permissions import IsParentRole, IsTeacherRole
 
-from .models import Homework, HomeworkStatus
+from .models import Homework, HomeworkStatus, HomeworkSubmissionEvent
 from .serializers import (
     HomeworkSerializer,
     HomeworkStatusSerializer,
+    HomeworkSubmissionEventSerializer,
     HomeworkTodoSerializer,
     HomeworkTodoGroupedSerializer,
     ParentHomeworkStatusUpdateSerializer,
@@ -150,7 +151,7 @@ class ParentHomeworkStatusSubmit(APIView):
 
     def patch(self, request, status_id: int):
         hw_status = get_object_or_404(
-            HomeworkStatus.objects.select_related("student"),
+            HomeworkStatus.objects.select_related("student", "student__school_class", "homework", "homework__school_class"),
             id=status_id,
             student__parent_links__parent=request.user,
         )
@@ -160,7 +161,30 @@ class ParentHomeworkStatusSubmit(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        from_status = hw_status.status
+
         serializer = ParentHomeworkStatusUpdateSerializer(hw_status, data={"status": HomeworkStatus.Status.SUBMITTED}, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        HomeworkSubmissionEvent.objects.create(
+            parent_user=request.user,
+            homework_status=hw_status,
+            homework=hw_status.homework,
+            student=hw_status.student,
+            from_status=from_status,
+            to_status=hw_status.status,
+        )
         return Response(HomeworkStatusSerializer(hw_status).data)
+
+
+class ParentHomeworkSubmissionHistoryList(APIView):
+    permission_classes = [IsParentRole]
+
+    def get(self, request):
+        qs = (
+            HomeworkSubmissionEvent.objects.filter(parent_user=request.user)
+            .select_related("student", "student__school_class", "homework", "homework_status")
+            .order_by("-created_at")
+        )
+        return Response(HomeworkSubmissionEventSerializer(qs, many=True).data)
